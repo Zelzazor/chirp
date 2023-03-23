@@ -1,8 +1,10 @@
 import Image from "next/image";
-import { type RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { ErrorPage } from "./Error";
+import { LoadingPage } from "./Loading";
 
 dayjs.extend(relativeTime);
 
@@ -18,7 +20,13 @@ interface PostProps {
 
 
 
-export const PostList = ({ posts }: PostListProps) => {
+export const Feed = () => {
+
+  const { data: posts, isLoading: postsLoading, isError } = api.posts.getPosts.useQuery();
+
+  if(postsLoading) return <LoadingPage />;
+  if(isError) return <ErrorPage />;
+
   return (
     <div className="flex flex-col items-center w-full gap-4">
       <div className="flex flex-col gap-4 w-3/4">
