@@ -1,8 +1,21 @@
-import { type Post } from "@prisma/client";
+import Image from "next/image";
+import { type RouterOutputs } from "~/utils/api";
 
-interface PostListProps {
-  posts: Post[];
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+
+type PostWithUser = RouterOutputs["posts"]["getPosts"][number];
+
+export type PostListProps = {
+  posts: PostWithUser[];
+};
+
+interface PostProps {
+  post: PostWithUser;
 }
+
 
 
 export const PostList = ({ posts }: PostListProps) => {
@@ -11,12 +24,24 @@ export const PostList = ({ posts }: PostListProps) => {
       <div className="flex flex-col gap-4 w-3/4">
         {posts.length === 0 && <div className="text-white text-4xl text-bold">No posts yet!</div>}
         {posts.map((post) => (
-          <div key={post.id} className="flex flex-col gap-4 border rounded h-32 text-white px-4 py-2">
-            <div className="flex text-sm justify-end">{post.createdAt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} · {post.createdAt.toLocaleDateString()}</div>
-            <p className="text-white">{post.content}</p>
-          </div>
+          <Post key={post.post.id} post={post} />
         ))}
       </div>
     </div>
   );
+}
+
+
+
+const Post = ({ post }: PostProps) => {
+  return (
+    <div className="flex flex-col gap-4 border rounded h-32 text-white px-4 py-2">
+      <div className="flex text-sm items-center gap-2">
+        <Image src={post.author.profileImageUrl} alt="Chirp author" width={48} height={48} className="h-8 w-8 rounded-full"/>
+        <p className="underline cursor-pointer">@{post.author.username}</p>
+        <p className="text-gray-400 cursor-default">· {dayjs(post.post.createdAt).fromNow()}</p>
+      </div>
+      <p className="text-white">{post.post.content}</p>
+    </div>
+  )
 }
