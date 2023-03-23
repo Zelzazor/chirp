@@ -49,7 +49,7 @@ const Post = ({ post }: PostProps) => {
         <p className="underline cursor-pointer">@{post.author.username}</p>
         <p className="text-gray-400 cursor-default">· {dayjs(post.post.createdAt).fromNow()}</p>
       </div>
-      <p className="text-white">{post.post.content}</p>
+      <p className="text-2xl">{post.post.content}</p>
     </div>
   )
 }
